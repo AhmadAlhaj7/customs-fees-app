@@ -3,6 +3,7 @@ import 'package:excel/excel.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:open_filex/open_filex.dart';
+import 'package:permission_handler/permission_handler.dart';
 import '../models/product.dart';
 import '../models/database_model.dart';
 import '../database/db_helper.dart';
@@ -88,53 +89,59 @@ class ExcelService {
     dbModel.itemCount = products.length;
     return dbModel;
   }
-
-  // ─── EXPORT ───────────────────────────────────────────
-
-  static Future<void> exportExcel(
+static Future<void> exportExcel(
       DatabaseModel dbModel, List<Product> products) async {
-    // Step 1: Create Excel file
-    final excel = Excel.createExcel();
-    final sheet = excel['Products'];
+    try {
+      // Step 1: Request permissions
+      await Permission.storage.request();
+      await Permission.manageExternalStorage.request();
 
-    // Step 2: Add header row
-    final headers = [
-      'البند الفرعي',
-      'اسم البند',
-      'رسم الاستيراد',
-      'بدل خدمات',
-      'رسم الاستيراد كامل',
-      'الاسم التجاري',
-    ];
+      // Step 2: Verify we have products
+      if (products.isEmpty) {
+        throw Exception('لا توجد بيانات للتصدير');
+      }
 
-    for (int i = 0; i < headers.length; i++) {
-      sheet
-          .cell(CellIndex.indexByColumnRow(columnIndex: i, rowIndex: 0))
-          .value = TextCellValue(headers[i]);
+      // Step 3: Create Excel
+      final excel = Excel.createExcel();
+      final sheet = excel['Sheet1'];
+
+      // Step 4: Add headers
+      sheet.cell(CellIndex.indexByColumnRow(columnIndex: 0, rowIndex: 0)).value = TextCellValue('البند الفرعي');
+      sheet.cell(CellIndex.indexByColumnRow(columnIndex: 1, rowIndex: 0)).value = TextCellValue('اسم البند');
+      sheet.cell(CellIndex.indexByColumnRow(columnIndex: 2, rowIndex: 0)).value = TextCellValue('رسم الاستيراد');
+      sheet.cell(CellIndex.indexByColumnRow(columnIndex: 3, rowIndex: 0)).value = TextCellValue('بدل خدمات');
+      sheet.cell(CellIndex.indexByColumnRow(columnIndex: 4, rowIndex: 0)).value = TextCellValue('رسم الاستيراد كامل');
+      sheet.cell(CellIndex.indexByColumnRow(columnIndex: 5, rowIndex: 0)).value = TextCellValue('الاسم التجاري');
+
+      // Step 5: Add rows
+      for (int i = 0; i < products.length; i++) {
+        final p = products[i];
+        final row = i + 1;
+        sheet.cell(CellIndex.indexByColumnRow(columnIndex: 0, rowIndex: row)).value = TextCellValue(p.itemNumber);
+        sheet.cell(CellIndex.indexByColumnRow(columnIndex: 1, rowIndex: row)).value = TextCellValue(p.itemName);
+        sheet.cell(CellIndex.indexByColumnRow(columnIndex: 2, rowIndex: row)).value = TextCellValue(p.importFee.toString());
+        sheet.cell(CellIndex.indexByColumnRow(columnIndex: 3, rowIndex: row)).value = TextCellValue(p.serviceFee.toString());
+        sheet.cell(CellIndex.indexByColumnRow(columnIndex: 4, rowIndex: row)).value = TextCellValue(p.totalFee.toString());
+        sheet.cell(CellIndex.indexByColumnRow(columnIndex: 5, rowIndex: row)).value = TextCellValue(p.commercialName);
+      }
+
+      // Step 6: Save file
+      final directory = Directory('/storage/emulated/0/Download');
+      if (!await directory.exists()) {
+        await directory.create(recursive: true);
+      }
+
+      final fileName = '${dbModel.name}_export.xlsx';
+      final filePath = '${directory.path}/$fileName';
+
+      final fileBytes = excel.encode()!;
+      await File(filePath).writeAsBytes(fileBytes, flush: true);
+
+      // Step 7: Open file
+      await OpenFilex.open(filePath);
+
+    } catch (e) {
+      rethrow;
     }
-
-    // Step 3: Add product rows
-    for (int i = 0; i < products.length; i++) {
-      final p = products[i];
-      final rowIndex = i + 1;
-      sheet.cell(CellIndex.indexByColumnRow(columnIndex: 0, rowIndex: rowIndex)).value = TextCellValue(p.itemNumber);
-      sheet.cell(CellIndex.indexByColumnRow(columnIndex: 1, rowIndex: rowIndex)).value = TextCellValue(p.itemName);
-      sheet.cell(CellIndex.indexByColumnRow(columnIndex: 2, rowIndex: rowIndex)).value = DoubleCellValue(p.importFee);
-      sheet.cell(CellIndex.indexByColumnRow(columnIndex: 3, rowIndex: rowIndex)).value = DoubleCellValue(p.serviceFee);
-      sheet.cell(CellIndex.indexByColumnRow(columnIndex: 4, rowIndex: rowIndex)).value = DoubleCellValue(p.totalFee);
-      sheet.cell(CellIndex.indexByColumnRow(columnIndex: 5, rowIndex: rowIndex)).value = TextCellValue(p.commercialName);
-    }
-
-    // Step 4: Save file to device
-    final directory = await getApplicationDocumentsDirectory();
-    final filePath = '${directory.path}/${dbModel.name}_export.xlsx';
-    final fileBytes = excel.encode();
-    if (fileBytes == null) return;
-
-    final file = File(filePath);
-    await file.writeAsBytes(fileBytes);
-
-    // Step 5: Open the file
-    await OpenFilex.open(filePath);
   }
 }

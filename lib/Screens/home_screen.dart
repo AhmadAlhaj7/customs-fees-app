@@ -56,11 +56,20 @@ class _HomeScreenState extends State<HomeScreen> {
       final products =
           await DBHelper.getProductsByDatabase(widget.database.id!);
       await ExcelService.exportExcel(widget.database, products);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('✅ تم تصدير الملف إلى مجلد التنزيلات'),
+            backgroundColor: Colors.green,
+            duration: Duration(seconds: 3),
+          ),
+        );
+      }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('❌ Export failed: $e'),
+            content: Text('❌ فشل التصدير: $e'),
             backgroundColor: Colors.red,
           ),
         );
