@@ -23,13 +23,20 @@ class _DetailScreenState extends State<DetailScreen> {
   @override
   void initState() {
     super.initState();
-    _itemNumberController = TextEditingController(text: widget.product.itemNumber);
-    _itemNameController = TextEditingController(text: widget.product.itemName);
-    _descriptionController = TextEditingController(text: widget.product.description);
-    _importFeeController = TextEditingController(text: widget.product.importFee.toString());
-    _serviceFeeController = TextEditingController(text: widget.product.serviceFee.toString());
-    _totalFeeController = TextEditingController(text: widget.product.totalFee.toString());
-    _commercialNameController = TextEditingController(text: widget.product.commercialName);
+    _itemNumberController =
+        TextEditingController(text: widget.product.itemNumber);
+    _itemNameController =
+        TextEditingController(text: widget.product.itemName);
+    _descriptionController =
+        TextEditingController(text: widget.product.description);
+    _importFeeController =
+        TextEditingController(text: widget.product.importFee.toString());
+    _serviceFeeController =
+        TextEditingController(text: widget.product.serviceFee.toString());
+    _totalFeeController =
+        TextEditingController(text: widget.product.totalFee.toString());
+    _commercialNameController =
+        TextEditingController(text: widget.product.commercialName);
   }
 
   @override
@@ -47,6 +54,7 @@ class _DetailScreenState extends State<DetailScreen> {
   Future<void> _saveChanges() async {
     final updated = Product(
       id: widget.product.id,
+      databaseId: widget.product.databaseId,
       itemNumber: _itemNumberController.text,
       itemName: _itemNameController.text,
       description: _descriptionController.text,
@@ -60,7 +68,10 @@ class _DetailScreenState extends State<DetailScreen> {
     setState(() => _isEditing = false);
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Product updated successfully!')),
+        const SnackBar(
+          content: Text('✅ Product updated successfully!'),
+          backgroundColor: Colors.green,
+        ),
       );
     }
   }
@@ -70,20 +81,32 @@ class _DetailScreenState extends State<DetailScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Delete Product'),
-        content: const Text('Are you sure you want to delete this product?'),
+        content:
+            const Text('Are you sure you want to delete this product?'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancel')),
-          TextButton(onPressed: () => Navigator.pop(context, true), child: const Text('Delete', style: TextStyle(color: Colors.red))),
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Delete',
+                style: TextStyle(color: Colors.red)),
+          ),
         ],
       ),
     );
     if (confirm == true) {
-      await DBHelper.deleteProduct(widget.product.id!);
+      await DBHelper.deleteProduct(
+        widget.product.id!,
+        widget.product.databaseId,
+      );
       if (mounted) Navigator.pop(context);
     }
   }
 
-  Widget _buildField(String label, TextEditingController controller, {TextInputType? keyboardType}) {
+  Widget _buildField(String label, TextEditingController controller,
+      {TextInputType? keyboardType}) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16.0),
       child: TextField(
@@ -92,7 +115,9 @@ class _DetailScreenState extends State<DetailScreen> {
         keyboardType: keyboardType,
         decoration: InputDecoration(
           labelText: label,
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
           filled: true,
           fillColor: _isEditing ? Colors.white : Colors.grey[100],
         ),
@@ -104,7 +129,9 @@ class _DetailScreenState extends State<DetailScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.product.commercialName),
+        title: Text(widget.product.commercialName.isNotEmpty
+            ? widget.product.commercialName
+            : widget.product.itemName),
         backgroundColor: Colors.orange,
         foregroundColor: Colors.white,
         actions: [
@@ -138,9 +165,12 @@ class _DetailScreenState extends State<DetailScreen> {
             _buildField('Commercial Name', _commercialNameController),
             _buildField('Item Name', _itemNameController),
             _buildField('Description', _descriptionController),
-            _buildField('Import Fee', _importFeeController, keyboardType: TextInputType.number),
-            _buildField('Service Fee', _serviceFeeController, keyboardType: TextInputType.number),
-            _buildField('Total Fee', _totalFeeController, keyboardType: TextInputType.number),
+            _buildField('Import Fee', _importFeeController,
+                keyboardType: TextInputType.number),
+            _buildField('Service Fee', _serviceFeeController,
+                keyboardType: TextInputType.number),
+            _buildField('Total Fee', _totalFeeController,
+                keyboardType: TextInputType.number),
           ],
         ),
       ),

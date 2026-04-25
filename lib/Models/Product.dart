@@ -1,5 +1,6 @@
 class Product {
   int? id;
+  int databaseId;
   String itemNumber;
   String itemName;
   String description;
@@ -11,6 +12,7 @@ class Product {
 
   Product({
     this.id,
+    required this.databaseId,
     required this.itemNumber,
     required this.itemName,
     required this.description,
@@ -21,10 +23,10 @@ class Product {
     this.imagePath,
   });
 
-  // Convert a Product into a Map (for saving to database)
   Map<String, dynamic> toMap() {
     return {
       'id': id,
+      'databaseId': databaseId,
       'itemNumber': itemNumber,
       'itemName': itemName,
       'description': description,
@@ -36,10 +38,10 @@ class Product {
     };
   }
 
-  // Convert a Map into a Product (for reading from database)
   factory Product.fromMap(Map<String, dynamic> map) {
     return Product(
       id: map['id'],
+      databaseId: map['databaseId'],
       itemNumber: map['itemNumber'],
       itemName: map['itemName'],
       description: map['description'],

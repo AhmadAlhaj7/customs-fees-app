@@ -3,7 +3,8 @@ import '../models/product.dart';
 import '../database/db_helper.dart';
 
 class AddScreen extends StatefulWidget {
-  const AddScreen({super.key});
+  final int databaseId;
+  const AddScreen({super.key, required this.databaseId});
 
   @override
   State<AddScreen> createState() => _AddScreenState();
@@ -32,16 +33,14 @@ class _AddScreenState extends State<AddScreen> {
   }
 
   Future<void> _saveProduct() async {
-    // Validate - make sure no field is empty
     if (_itemNumberController.text.isEmpty ||
         _itemNameController.text.isEmpty ||
-        _descriptionController.text.isEmpty ||
         _importFeeController.text.isEmpty ||
         _serviceFeeController.text.isEmpty ||
         _totalFeeController.text.isEmpty ||
         _commercialNameController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please fill all fields')),
+        const SnackBar(content: Text('Please fill all required fields')),
       );
       return;
     }
@@ -49,9 +48,12 @@ class _AddScreenState extends State<AddScreen> {
     setState(() => _isSaving = true);
 
     final product = Product(
+      databaseId: widget.databaseId,
       itemNumber: _itemNumberController.text,
       itemName: _itemNameController.text,
-      description: _descriptionController.text,
+      description: _descriptionController.text.isEmpty
+          ? _itemNameController.text
+          : _descriptionController.text,
       importFee: double.tryParse(_importFeeController.text) ?? 0,
       serviceFee: double.tryParse(_serviceFeeController.text) ?? 0,
       totalFee: double.tryParse(_totalFeeController.text) ?? 0,
@@ -64,21 +66,24 @@ class _AddScreenState extends State<AddScreen> {
 
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Product added successfully!')),
+        const SnackBar(
+          content: Text('✅ Product added successfully!'),
+          backgroundColor: Colors.green,
+        ),
       );
       Navigator.pop(context);
     }
   }
 
   Widget _buildField(String label, TextEditingController controller,
-      {TextInputType? keyboardType}) {
+      {TextInputType? keyboardType, bool required = true}) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16.0),
       child: TextField(
         controller: controller,
         keyboardType: keyboardType,
         decoration: InputDecoration(
-          labelText: label,
+          labelText: required ? '$label *' : label,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
           ),
@@ -100,11 +105,18 @@ class _AddScreenState extends State<AddScreen> {
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            const Text(
+              '* Required fields',
+              style: TextStyle(color: Colors.grey, fontSize: 12),
+            ),
+            const SizedBox(height: 16),
             _buildField('Item Number', _itemNumberController),
             _buildField('Commercial Name', _commercialNameController),
             _buildField('Item Name', _itemNameController),
-            _buildField('Description', _descriptionController),
+            _buildField('Description', _descriptionController,
+                required: false),
             _buildField('Import Fee', _importFeeController,
                 keyboardType: TextInputType.number),
             _buildField('Service Fee', _serviceFeeController,
