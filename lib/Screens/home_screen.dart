@@ -86,7 +86,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         color: Colors.white, strokeWidth: 2),
                   )
                 : const Icon(Icons.upload_file),
-            tooltip: 'Export Excel',
+            tooltip: 'تصدير Excel',
             onPressed: _isExporting ? null : _exportExcel,
           ),
         ],
@@ -100,7 +100,7 @@ class _HomeScreenState extends State<HomeScreen> {
               controller: _searchController,
               onChanged: _searchProducts,
               decoration: InputDecoration(
-                hintText: 'Search by item number or name...',
+                hintText: 'ابحث برقم البند أو الاسم...',
                 prefixIcon: const Icon(Icons.search),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -115,10 +115,11 @@ class _HomeScreenState extends State<HomeScreen> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Align(
-              alignment: Alignment.centerLeft,
+              alignment: Alignment.centerRight,
               child: Text(
-                '${_products.length} items found',
+                '${_products.length} عنصر',
                 style: const TextStyle(color: Colors.grey),
+                textAlign: TextAlign.right,
               ),
             ),
           ),
@@ -130,7 +131,7 @@ class _HomeScreenState extends State<HomeScreen> {
             child: _isLoading
                 ? const Center(child: CircularProgressIndicator())
                 : _products.isEmpty
-                    ? const Center(child: Text('No products found'))
+                    ? const Center(child: Text('لا توجد منتجات'))
                     : ListView.builder(
                         itemCount: _products.length,
                         itemBuilder: (context, index) {
@@ -159,7 +160,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 style: const TextStyle(
                                     fontWeight: FontWeight.bold),
                               ),
-                              subtitle: Text('Item #${product.itemNumber}'),
+                              subtitle: Text('رقم البند: ${product.itemNumber}'),
                               trailing: Text(
                                 '${product.totalFee.toStringAsFixed(0)}%',
                                 style: const TextStyle(

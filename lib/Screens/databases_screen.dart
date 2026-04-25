@@ -64,18 +64,18 @@ class _DatabasesScreenState extends State<DatabasesScreen> {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Delete Database'),
+        title: const Text('حذف قاعدة البيانات'),
         content: Text(
-            'Are you sure you want to delete "${dbModel.name}" and all its items?'),
+            'هل أنت متأكد من حذف "${dbModel.name}" وجميع عناصرها؟'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
+            child: const Text('إلغاء'),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
             child:
-                const Text('Delete', style: TextStyle(color: Colors.red)),
+                const Text('حذف', style: TextStyle(color: Colors.red)),
           ),
         ],
       ),
@@ -85,7 +85,7 @@ class _DatabasesScreenState extends State<DatabasesScreen> {
       await _loadDatabases();
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Database deleted')),
+          const SnackBar(content: Text('تم حذف قاعدة البيانات')),
         );
       }
     }
@@ -95,7 +95,7 @@ class _DatabasesScreenState extends State<DatabasesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Customs Fees App'),
+        title: const Text('التعرفة الجمركية'),
         backgroundColor: Colors.orange,
         foregroundColor: Colors.white,
       ),
@@ -110,13 +110,13 @@ class _DatabasesScreenState extends State<DatabasesScreen> {
                           size: 80, color: Colors.grey[400]),
                       const SizedBox(height: 16),
                       Text(
-                        'No databases yet',
+                        'لا توجد قواعد بيانات',
                         style: TextStyle(
                             fontSize: 18, color: Colors.grey[600]),
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        'Import an Excel file to get started',
+                        'استورد ملف Excel للبدء',
                         style: TextStyle(color: Colors.grey[400]),
                       ),
                       const SizedBox(height: 32),
@@ -140,7 +140,7 @@ class _DatabasesScreenState extends State<DatabasesScreen> {
                               )
                             : const Icon(Icons.upload_file),
                         label: Text(
-                            _isImporting ? 'Importing...' : 'Import Excel'),
+                            _isImporting ? 'جاري الاستيراد...' : 'استيراد Excel'),
                       ),
                     ],
                   ),
@@ -173,7 +173,7 @@ class _DatabasesScreenState extends State<DatabasesScreen> {
                           style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
                         subtitle: Text(
-                          '${db.itemCount} items • ${db.createdAt.day}/${db.createdAt.month}/${db.createdAt.year}',
+                          '${db.itemCount} عنصر • ${db.createdAt.day}/${db.createdAt.month}/${db.createdAt.year}',
                           style: const TextStyle(color: Colors.grey),
                         ),
                         trailing: IconButton(
@@ -209,7 +209,7 @@ class _DatabasesScreenState extends State<DatabasesScreen> {
                     )
                   : const Icon(Icons.upload_file, color: Colors.white),
               label: Text(
-                _isImporting ? 'Importing...' : 'Import Excel',
+                _isImporting ? 'جاري الاستيراد...' : 'استيراد Excel',
                 style: const TextStyle(color: Colors.white),
               ),
             ),

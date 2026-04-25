@@ -54,9 +54,10 @@ class ExcelService {
       }
 
       double getDouble(int colIndex) {
-        final str = getString(colIndex);
-        return double.tryParse(str) ?? 0.0;
-      }
+    final str = getString(colIndex);
+    final value = double.tryParse(str) ?? 0.0;
+    return double.parse(value.toStringAsFixed(2));
+}
 
       final itemNumber = getString(2);      // Column C
       final itemName = getString(3);        // Column D

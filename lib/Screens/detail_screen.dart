@@ -69,7 +69,7 @@ class _DetailScreenState extends State<DetailScreen> {
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('✅ Product updated successfully!'),
+          content: Text('✅ تم تحديث المنتج بنجاح!'),
           backgroundColor: Colors.green,
         ),
       );
@@ -80,17 +80,17 @@ class _DetailScreenState extends State<DetailScreen> {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Delete Product'),
+        title: const Text('حذف المنتج'),
         content:
-            const Text('Are you sure you want to delete this product?'),
+            const Text('هل أنت متأكد من حذف هذا المنتج؟'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
+            child: const Text('إلغاء'),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Delete',
+            child: const Text('حذف',
                 style: TextStyle(color: Colors.red)),
           ),
         ],
@@ -160,16 +160,17 @@ class _DetailScreenState extends State<DetailScreen> {
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            _buildField('Item Number', _itemNumberController),
-            _buildField('Commercial Name', _commercialNameController),
-            _buildField('Item Name', _itemNameController),
-            _buildField('Description', _descriptionController),
-            _buildField('Import Fee', _importFeeController,
+            _buildField('رقم البند', _itemNumberController),
+            _buildField('الاسم التجاري', _commercialNameController),
+            _buildField('اسم البند', _itemNameController),
+            _buildField('الوصف', _descriptionController),
+            _buildField('رسم الاستيراد', _importFeeController,
                 keyboardType: TextInputType.number),
-            _buildField('Service Fee', _serviceFeeController,
+            _buildField('بدل الخدمات', _serviceFeeController,
                 keyboardType: TextInputType.number),
-            _buildField('Total Fee', _totalFeeController,
+            _buildField('رسم الاستيراد الكامل', _totalFeeController,
                 keyboardType: TextInputType.number),
           ],
         ),

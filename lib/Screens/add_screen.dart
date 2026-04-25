@@ -40,7 +40,7 @@ class _AddScreenState extends State<AddScreen> {
         _totalFeeController.text.isEmpty ||
         _commercialNameController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please fill all required fields')),
+        const SnackBar(content: Text('يرجى تعبئة جميع الحقول المطلوبة')),
       );
       return;
     }
@@ -67,7 +67,7 @@ class _AddScreenState extends State<AddScreen> {
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('✅ Product added successfully!'),
+          content: Text('✅ تمت إضافة المنتج بنجاح!'),
           backgroundColor: Colors.green,
         ),
       );
@@ -98,30 +98,31 @@ class _AddScreenState extends State<AddScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Add New Product'),
+        title: const Text('إضافة منتج جديد'),
         backgroundColor: Colors.orange,
         foregroundColor: Colors.white,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             const Text(
-              '* Required fields',
+              'الحقول المطلوبة *',
               style: TextStyle(color: Colors.grey, fontSize: 12),
+              textAlign: TextAlign.right,
             ),
             const SizedBox(height: 16),
-            _buildField('Item Number', _itemNumberController),
-            _buildField('Commercial Name', _commercialNameController),
-            _buildField('Item Name', _itemNameController),
-            _buildField('Description', _descriptionController,
+            _buildField('رقم البند', _itemNumberController),
+            _buildField('الاسم التجاري', _commercialNameController),
+            _buildField('اسم البند', _itemNameController),
+            _buildField('الوصف', _descriptionController,
                 required: false),
-            _buildField('Import Fee', _importFeeController,
+            _buildField('رسم الاستيراد', _importFeeController,
                 keyboardType: TextInputType.number),
-            _buildField('Service Fee', _serviceFeeController,
+            _buildField('بدل الخدمات', _serviceFeeController,
                 keyboardType: TextInputType.number),
-            _buildField('Total Fee', _totalFeeController,
+            _buildField('رسم الاستيراد الكامل', _totalFeeController,
                 keyboardType: TextInputType.number),
             const SizedBox(height: 24),
             SizedBox(
@@ -138,7 +139,7 @@ class _AddScreenState extends State<AddScreen> {
                 onPressed: _isSaving ? null : _saveProduct,
                 child: _isSaving
                     ? const CircularProgressIndicator(color: Colors.white)
-                    : const Text('Save Product',
+                    : const Text('حفظ المنتج',
                         style: TextStyle(fontSize: 16)),
               ),
             ),

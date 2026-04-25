@@ -17,14 +17,17 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Customs Fees App',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.orange),
-        useMaterial3: true,
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: MaterialApp(
+        title: 'التعرفة الجمركية',
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.orange),
+          useMaterial3: true,
+        ),
+        home: const DatabasesScreen(),
       ),
-      home: const DatabasesScreen(),
     );
   }
 }
